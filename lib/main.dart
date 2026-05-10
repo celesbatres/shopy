@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shopy/pages/login_page.dart';
+import 'package:shopy/pages/register_page.dart';
 
+// import 'package:shopy/ui/pages/inicio.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -30,7 +33,8 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Shopy'),
+      // home: const InicioPage(),
     );
   }
 }
@@ -76,7 +80,111 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            Container(
+              height: 50,
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 30, // Sets the size
+                    backgroundImage: NetworkImage(
+                      'https://images.ctfassets.net/h6goo9gw1hh6/2sNZtFAWOdP1lmQ33VwRN3/24e953b920a9cd0ff2e1d587742a2472/1-intro-photo-final.jpg?w=1200&h=992&fl=progressive&q=70&fm=jpg',
+                    ),
+                  ),
+
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) {
+                            return const LoginPage();
+                          },
+                        ),
+                      );
+                    },
+                    child: Card(
+                      child: SizedBox(
+                        width: 110,
+                        child: Center(child: Text("Iniciar Sesion")),
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) {
+                            return const RegisterPage();
+                          },
+                        ),
+                      );
+                    },
+                    child: Card(
+                      child: SizedBox(
+                        width: 110,
+                        height: 100,
+                        child: Center(child: Text("Crear cuenta")),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 50),
+            ListTile(title: Text('Mi cuenta')),
+            ListTile(title: Text('Mis favoritos')),
+            ListTile(title: Text('Mis pedidos')),
+            ListTile(title: Text('Mis productos')),
+          ],
+        ),
+      ),
       appBar: AppBar(
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            );
+          },
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.search),
+            tooltip: 'Buscar',
+            onPressed: () {
+              showSearch(context: context, delegate: MySearchDelegate());
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.shopping_cart),
+            tooltip: 'Go to the next page',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) {
+                    return Scaffold(
+                      appBar: AppBar(title: const Text('Next page')),
+                      body: const Center(
+                        child: Text(
+                          'This is the next page',
+                          style: TextStyle(fontSize: 24),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        ],
         // TRY THIS: Try changing the color here to a specific color (to
         // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
         // change color while the other colors stay the same.
@@ -118,5 +226,40 @@ class _MyHomePageState extends State<MyHomePage> {
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+}
+
+// Search delegate
+class MySearchDelegate extends SearchDelegate {
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return Center(child: Text('Resultado: $query'));
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return Center(child: Text('Buscar: $query'));
   }
 }
